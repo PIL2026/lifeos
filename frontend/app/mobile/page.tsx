@@ -9,19 +9,15 @@ type Log = {
 }
 
 export default function MobilePage() {
+  const API_URL = "https://lifeos-u2t0.onrender.com"
+
   const [text, setText] = useState("")
   const [logs, setLogs] = useState<Log[]>([])
 
-  const API_URL = "https://lifeos-u2t0.onrender.com"
-
   const fetchLogs = async () => {
-    try {
-      const res = await fetch(`${API_URL}/raw-logs`)
-      const data = await res.json()
-      setLogs(data.reverse())
-    } catch (err) {
-      console.log(err)
-    }
+    const res = await fetch(`${API_URL}/raw-logs`)
+    const data = await res.json()
+    setLogs(data.reverse())
   }
 
   useEffect(() => {
@@ -29,117 +25,105 @@ export default function MobilePage() {
   }, [])
 
   const saveTemplate = async (value: string) => {
-    try {
-      await fetch(
-        `${API_URL}/raw-log?content=${encodeURIComponent(
-          value
-        )}&category=テンプレ`,
-        {
-          method: "POST",
-        }
-      )
-      fetchLogs()
-    } catch (err) {
-      console.log(err)
-    }
+    await fetch(
+      `${API_URL}/raw-log?content=${encodeURIComponent(value)}&category=テンプレ`,
+      { method: "POST" }
+    )
+    fetchLogs()
   }
 
   const saveLog = async () => {
-    if (!text) return
+    if (!text.trim()) return
 
-    try {
-      await fetch(
-        `${API_URL}/raw-log?content=${encodeURIComponent(
-          text
-        )}&category=手入力`,
-        {
-          method: "POST",
-        }
-      )
+    await fetch(
+      `${API_URL}/raw-log?content=${encodeURIComponent(text)}&category=手入力`,
+      { method: "POST" }
+    )
 
-      setText("")
-      fetchLogs()
-    } catch (err) {
-      console.log(err)
-    }
+    setText("")
+    fetchLogs()
   }
 
   return (
     <main className="min-h-screen bg-black text-white p-4">
-      <h1 className="text-2xl font-bold text-cyan-400 mb-6">
-        LifeOS Mobile
+      <h1 className="text-2xl font-bold text-cyan-400 mb-2">
+        LifeOS
       </h1>
 
-      {/* テンプレボタン */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        <button
-          onClick={() => saveTemplate("出勤")}
-          className="bg-cyan-500 p-3 rounded-xl"
-        >
-          出勤
-        </button>
+      <p className="text-gray-400 mb-6">
+        今日の行動をすぐ記録する画面
+      </p>
 
-        <button
-          onClick={() => saveTemplate("帰宅")}
-          className="bg-cyan-500 p-3 rounded-xl"
-        >
-          帰宅
-        </button>
+      <section className="mb-6">
+        <h2 className="text-lg font-bold mb-3">よく使う記録</h2>
 
-        <button
-          onClick={() => saveTemplate("胸トレ")}
-          className="bg-cyan-500 p-3 rounded-xl"
-        >
-          胸トレ
-        </button>
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => saveTemplate("出勤")} className="bg-cyan-500 p-4 rounded-xl">
+            出勤
+          </button>
 
-        <button
-          onClick={() => saveTemplate("PIL作業")}
-          className="bg-cyan-500 p-3 rounded-xl"
-        >
-          PIL作業
-        </button>
-      </div>
+          <button onClick={() => saveTemplate("退勤")} className="bg-cyan-500 p-4 rounded-xl">
+            退勤
+          </button>
 
-      {/* 手入力 */}
-      <div className="mb-6">
+          <button onClick={() => saveTemplate("帰宅")} className="bg-cyan-500 p-4 rounded-xl">
+            帰宅
+          </button>
+
+          <button onClick={() => saveTemplate("就寝")} className="bg-cyan-500 p-4 rounded-xl">
+            就寝
+          </button>
+
+          <button onClick={() => saveTemplate("起床")} className="bg-cyan-500 p-4 rounded-xl">
+            起床
+          </button>
+
+          <button onClick={() => saveTemplate("PIL作業")} className="bg-cyan-500 p-4 rounded-xl">
+            PIL作業
+          </button>
+
+          <button onClick={() => saveTemplate("筋トレ")} className="bg-cyan-500 p-4 rounded-xl">
+            筋トレ
+          </button>
+
+          <button onClick={() => saveTemplate("買い物")} className="bg-cyan-500 p-4 rounded-xl">
+            買い物
+          </button>
+        </div>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-lg font-bold mb-3">自由入力</h2>
+
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="何した？"
-          className="w-full p-3 rounded text-black mb-3"
+          placeholder="例：コンビニでプロテイン 250円"
+          className="w-full p-4 rounded-xl text-black mb-3"
         />
 
         <button
           onClick={saveLog}
-          className="w-full bg-green-500 p-3 rounded-xl"
+          className="w-full bg-green-500 p-4 rounded-xl font-bold"
         >
           保存
         </button>
-      </div>
+      </section>
 
-      {/* 履歴 */}
-      <div>
-        <h2 className="text-xl mb-3 text-cyan-400">
-          今日の履歴
-        </h2>
+      <section>
+        <h2 className="text-lg font-bold mb-3">最近の記録</h2>
 
         {logs.length === 0 ? (
           <p className="text-gray-400">まだ記録なし</p>
         ) : (
           logs.map((log) => (
-            <div
-              key={log.id}
-              className="border border-cyan-500 rounded p-3 mb-2"
-            >
+            <div key={log.id} className="border border-cyan-500 rounded-xl p-3 mb-2">
               <p>{log.content}</p>
-              <p className="text-sm text-gray-400">
-                {log.category}
-              </p>
+              <p className="text-sm text-gray-400">{log.category}</p>
             </div>
           ))
         )}
-      </div>
+      </section>
     </main>
   )
 }
