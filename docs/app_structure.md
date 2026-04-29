@@ -1,0 +1,8 @@
+raw_logs
+structured_logs
+tasks
+goals
+reviews
+ideas
+templates
+kpi_logs

@@ -1,0 +1,8 @@
+{
+  "name": "LifeOS",
+  "short_name": "LifeOS",
+  "start_url": "/mobile",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00ffff"
+}
